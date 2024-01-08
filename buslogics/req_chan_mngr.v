@@ -24,9 +24,10 @@ module req_chan_mngr
 	output [5:0] a_atop,
 	// signals other side
 	input start_rq,
+	input [31:0] in_addr,
 	output next_rq,
 	output [3:0] next_id,
-	input [31:0] in_addr
+	output [31:0] next_addr
 
 	);
 
@@ -42,7 +43,7 @@ assign a_atop = 6'b000000; // non-atomic
 // Request channel manager state machine
 reg [1:0] reqc_m_current;
 
-function [10:0] reqc_m_decode;
+function [1:0] reqc_m_decode;
 input [1:0] reqc_m_current;
 input start_rq;
 input gnt_rq;
@@ -69,7 +70,7 @@ begin
 				default: reqc_m_decode = `REQC_MDEFO;
     		endcase
 		`REQC_MDEFO: reqc_m_decode = `REQC_MDEFO;
-		default:      reqc_m_decode = `REQC_MDEFO;
+		default:     reqc_m_decode = `REQC_MDEFO;
    	endcase
 end
 endfunction
@@ -99,12 +100,25 @@ end
 
 assign a_id = { REQC_M_ID, id_cntr };
 
-// address keeper
+// address busout keeper
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
        a_addr  <= 32'd0;
     else if (start_rq)
        a_addr  <= in_addr;
 end
+
+// id address keeper
+reg [35:0] next_id_addr;
+
+always @ (posedge clk or negedge rst_n) begin
+    if (~rst_n)
+       next_id_addr  <= 35'd0;
+    else if (gnt_rq)
+       next_id_addr  <= { a_id. a_addr };
+end
+
+assign next_id = next_id_addr[35:32];
+assign next_addr = next_id_addr[31:0];
 
 endmodule
