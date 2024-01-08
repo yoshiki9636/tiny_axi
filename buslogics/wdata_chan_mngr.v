@@ -20,11 +20,9 @@ module wdata_chan_mngr (
 	// signals other side
 	input next_rq,
 	input [3:0] next_id,
-	input [31:0] next_addr,
 	input [127:0] in_wdata,
 	output finish_wd,
-	output [3:0] finish_id,
-	output [31:0] finish_addr
+	output reg [3:0] finish_id
 
 	);
 
@@ -112,16 +110,12 @@ assign  wdata = (burst_cntr == 2'd3) : wdata_lat[31:0] :
                 (burst_cntr == 2'd1) : wdata_lat[95:64] : wdata_lat[127:96];
 
 // id address keeper
-reg [35:0] finish_id_addr;
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       finish_id_addr  <= 35'd0;
+       finish_id  <= 4'd0;
     else if (next_rq)
-       finish_id_addr  <= { next_id. next_addr };
+       finish_id  <= next_id;
 end
-
-assign finish_id = finish_id_addr[35:32];
-assign finish_addr = finish_id_addr[31:0];
 
 endmodule

@@ -26,8 +26,7 @@ module req_chan_mngr
 	input start_rq,
 	input [31:0] in_addr,
 	output next_rq,
-	output [3:0] next_id,
-	output [31:0] next_addr
+	output reg [3:0] next_id
 
 	);
 
@@ -109,16 +108,12 @@ always @ (posedge clk or negedge rst_n) begin
 end
 
 // id address keeper
-reg [35:0] next_id_addr;
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       next_id_addr  <= 35'd0;
+       next_id  <= 4'd0;
     else if (gnt_rq)
-       next_id_addr  <= { a_id. a_addr };
+       next_id  <= a_id;
 end
-
-assign next_id = next_id_addr[35:32];
-assign next_addr = next_id_addr[31:0];
 
 endmodule
