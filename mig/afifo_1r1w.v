@@ -1,6 +1,6 @@
 /*
  * My Systolic array
- *   ram for buffers
+ *   ram for async fifo
  *    Verilog code
  * @auther      Yoshiki Kurokawa <yoshiki.k963@gmail.com>
  * @copylight   2023 Yoshiki Kurokawa
