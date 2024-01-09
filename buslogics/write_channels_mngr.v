@@ -10,7 +10,7 @@
 
 module write_channels_mngr
     #(parameter REQC_M_ID = 2'b00)
-    (
+	(
 	input clk,
 	input rst_n,
 	//bus controls
@@ -40,7 +40,7 @@ module write_channels_mngr
 	// write data
 	input [127:0] in_wdata,
 	// write response
-	output finish_wresp,
+	output finish_wresp
 
 	);
 
@@ -49,7 +49,7 @@ wire [3:0] wnext_id; // output
 wire finish_wd; // output
 wire [3:0] finish_id; // output
 
-req_chan_mngr write_req_chan_mngr (
+req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) write_req_chan_mngr (
 	.clk(clk),
 	.rst_n(rst_n),
 	.req_rq(req_rq),

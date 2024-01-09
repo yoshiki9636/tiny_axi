@@ -11,17 +11,17 @@
 module sfifo
     #(parameter SFIFODW = 32,
       parameter SFIFOAW = 2,
-      parameter SFIFODP = 4,
+      parameter SFIFODP = 4
     ) (
 	input clk,
 	input rst_n,
 
     input wen,
 	output wqfull,
-    input [AFIFODW-1:0] wdata,
+    input [SFIFODW-1:0] wdata,
     input rnext,
 	output rqempty,
-    output [AFIFODW-1:0] rdata
+    output [SFIFODW-1:0] rdata
 	);
 
 reg [SFIFOAW-1:0] wadr;
@@ -60,9 +60,9 @@ wire frg = (wadr < radr);
 
 //wire wqfull_0 = (wadr == radr);
 //wire wqfull_1 = (wg&(wadr - radr == 2'd1))|(rg&(radr - wadr <= 2'd3));
-wire wqfull_2 = (wg&(wadr - radr == )SFIFODP-2)|(rg&(radr - wadr <= 2));
-wire wqfull_3 = (wg&(wadr - radr == SFIFODP-1))|(rg&(radr - wadr <= 1));
-assign wqfull,= wqfull_2 | wqfull_3 ;
+wire wqfull_2 = (fwg&(wadr - radr == SFIFODP-2))|(frg&(radr - wadr <= 2));
+wire wqfull_3 = (fwg&(wadr - radr == SFIFODP-1))|(frg&(radr - wadr <= 1));
+assign wqfull = wqfull_2 | wqfull_3 ;
 
 // qempty checker
 wire wqempty = (wadr == radr);

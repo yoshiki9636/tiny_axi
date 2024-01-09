@@ -49,8 +49,9 @@ begin
 				1'b0: wdat_s_decode = `WDAT_SIDLE;
 				default: wdat_s_decode = `WDAT_SDEFO;
     		endcase
+		end
 		`WDAT_SBINP: begin
-    		casex({wready, wlast, sqfull_1. next_srq})
+    		casex({wready, wlast, sqfull_1, next_srq})
 				4'b0xxx: wdat_s_decode = `WDAT_SBINP;
 				4'b10xx: wdat_s_decode = `WDAT_SBINP;
 				4'b1100: wdat_s_decode = `WDAT_SIDLE;
@@ -59,6 +60,7 @@ begin
 				4'b1111: wdat_s_decode = `WDAT_SLST1;
 				default: wdat_s_decode = `WDAT_SDEFO;
     		endcase
+		end
 		`WDAT_SLST1: begin
     		casex({wready, wlast,sqfull_1,next_srq})
 				4'b0xxx: wdat_s_decode = `WDAT_SLST1;
@@ -68,6 +70,7 @@ begin
 				4'b1100: wdat_s_decode = `WDAT_SIDLE;
 				default: wdat_s_decode = `WDAT_SDEFO;
     		endcase
+		end
 		`WDAT_SBUSY: begin
     		casex({sqfull_1,next_srq})
 				2'b1x: wdat_s_decode = `WDAT_SBUSY;
@@ -75,6 +78,7 @@ begin
 				2'b00: wdat_s_decode = `WDAT_SIDLE;
 				default: wdat_s_decode = `WDAT_SDEFO;
     		endcase
+		end
 		`WDAT_SDEFO: wdat_s_decode = `WDAT_SDEFO;
 		default:     wdat_s_decode = `WDAT_SDEFO;
    	endcase

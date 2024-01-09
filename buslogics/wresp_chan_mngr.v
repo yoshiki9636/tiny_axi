@@ -45,14 +45,16 @@ begin
 				1'b0: resp_m_decode = `RESP_MIDLE;
 				default: resp_m_decode = `RESP_MDEFO;
     		endcase
+		end
 		`RESP_MBINP: begin
-    		casex({bvalid. check_ok, finish_wd})
+    		casex({bvalid, check_ok, finish_wd})
 				3'b0xx: resp_m_decode = `RESP_MBINP;
 				3'b10x: resp_m_decode = `RESP_MDEFO;
 				3'b110: resp_m_decode = `RESP_MIDLE;
 				3'b111: resp_m_decode = `RESP_MBINP;
 				default: resp_m_decode = `RESP_MDEFO;
     		endcase
+		end
 		`RESP_MDEFO: resp_m_decode = `RESP_MDEFO;
 		default:     resp_m_decode = `RESP_MDEFO;
    	endcase

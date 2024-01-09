@@ -52,6 +52,7 @@ begin
 				3'b000: arbit3_decode = `ARB3_IDL012;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_SEL012: begin
     		casex({finish,req1,req2,req0})
 				4'b0xxx: arbit3_decode = `ARB3_SEL012;
@@ -61,6 +62,7 @@ begin
 				4'b1000: arbit3_decode = `ARB3_IDL120;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_IDL120: begin
     		casex({req1,req2,req0})
 				3'b1xx: arbit3_decode = `ARB3_SEL120;
@@ -69,6 +71,7 @@ begin
 				3'b000: arbit3_decode = `ARB3_IDL120;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_SEL120: begin
     		casex({finish,req2,req0,req1})
 				4'b0xxx: arbit3_decode = `ARB3_SEL120;
@@ -78,6 +81,7 @@ begin
 				4'b1000: arbit3_decode = `ARB3_IDL201;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_IDL201: begin
     		casex({req2,req0,req1})
 				3'b1xx: arbit3_decode = `ARB3_SEL201;
@@ -86,6 +90,7 @@ begin
 				3'b000: arbit3_decode = `ARB3_IDL201;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_SEL201: begin
     		casex({finish,req0,req1,req2})
 				4'b0xxx: arbit3_decode = `ARB3_SEL201;
@@ -95,13 +100,14 @@ begin
 				4'b1000: arbit3_decode = `ARB3_IDL012;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
+		end
 		`ARB3_SELDEF: arbit3_decode = `ARB3_SELDEF;
 		default:      arbit3_decode = `ARB3_SELDEF;
    	endcase
 end
 endfunction
 
-wire [2:0] arbit3_next = arbit3_decode( arbit3_current, req0, req1, req2 );
+wire [2:0] arbit3_next = arbit3_decode( arbit3_current, req0, req1, req2, finish );
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
@@ -111,9 +117,9 @@ always @ (posedge clk or negedge rst_n) begin
 end
 
 
-wire sel0_pre = (arbit3_next = `ARB3_SEL012);
-wire sel1_pre = (arbit3_next = `ARB3_SEL120);
-wire sel2_pre = (arbit3_next = `ARB3_SEL201);
+wire sel0_pre = (arbit3_next == `ARB3_SEL012);
+wire sel1_pre = (arbit3_next == `ARB3_SEL120);
+wire sel2_pre = (arbit3_next == `ARB3_SEL201);
 
 reg sel0_post;
 reg sel1_post;
@@ -128,7 +134,7 @@ always @ (posedge clk or negedge rst_n) begin
         sel0_post <= sel0_pre;
         sel1_post <= sel0_pre;
         sel2_post <= sel0_pre;
-    else begin
+	end
 end
 
 assign gnt0 = sel0_pre & ~sel0_post;

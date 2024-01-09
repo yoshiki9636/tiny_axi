@@ -36,6 +36,7 @@ module rdata_chan_mngr (
 
 // write data channel manager state machine
 reg [2:0] rdat_m_current;
+wire check_ok;
 
 function [2:0] rdat_m_decode;
 input [2:0] rdat_m_current;
@@ -43,7 +44,7 @@ input next_rrq;
 input rready;
 input rlast;
 input rqfull_1;
-wire check_ok;
+input check_ok;
 begin
     case(rdat_m_current)
 		`RDAT_MIDLE: begin
@@ -52,8 +53,9 @@ begin
 				1'b0: rdat_m_decode = `RDAT_MIDLE;
 				default: rdat_m_decode = `RDAT_MDEFO;
     		endcase
+		end
 		`RDAT_MBINP: begin
-    		casex({rready, check_ok, rlast, rqfull_1. next_rrq})
+    		casex({rready, check_ok, rlast, rqfull_1, next_rrq})
 				5'b0xxxx: rdat_m_decode = `RDAT_MBINP;
 				5'b00xxx: rdat_m_decode = `RDAT_MBINP;
 				5'b110xx: rdat_m_decode = `RDAT_MBINP;
@@ -63,8 +65,9 @@ begin
 				5'b11111: rdat_m_decode = `RDAT_MLST1;
 				default: rdat_m_decode = `RDAT_MDEFO;
     		endcase
+		end
 		`RDAT_MLST1: begin
-    		casex({rready, rlast,rqfull_1,next_rrq})
+    		casex({rready, rlast, rqfull_1, next_rrq})
 				4'b0xxx: rdat_m_decode = `RDAT_MLST1;
 				4'b10xx: rdat_m_decode = `RDAT_MLST1;
 				4'b111x: rdat_m_decode = `RDAT_MBUSY;
@@ -72,6 +75,7 @@ begin
 				4'b1100: rdat_m_decode = `RDAT_MIDLE;
 				default: rdat_m_decode = `RDAT_MDEFO;
     		endcase
+		end
 		`RDAT_MBUSY: begin
     		casex({rqfull_1,next_rrq})
 				2'b1x: rdat_m_decode = `RDAT_MBUSY;
@@ -79,13 +83,14 @@ begin
 				2'b00: rdat_m_decode = `RDAT_MIDLE;
 				default: rdat_m_decode = `RDAT_MDEFO;
     		endcase
+		end
 		`RDAT_MDEFO: rdat_m_decode = `RDAT_MDEFO;
 		default:     rdat_m_decode = `RDAT_MDEFO;
    	endcase
 end
 endfunction
 
-wire [2:0] rdat_m_next = rdat_m_decode( rdat_m_current, next_rrq, rready, rlast, rqfull_1 );
+wire [2:0] rdat_m_next = rdat_m_decode( rdat_m_current, next_rrq, rready, rlast, rqfull_1, check_ok );
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
@@ -180,6 +185,6 @@ always @ (posedge clk or negedge rst_n) begin
         next_rid_lat <= next_rid;
 end
 
-assign check_ok = rready (rid == next_rid_lat);
+assign check_ok = rready & (rid == next_rid_lat);
 
 endmodule

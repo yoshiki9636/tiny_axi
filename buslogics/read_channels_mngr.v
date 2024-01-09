@@ -37,7 +37,9 @@ module read_channels_mngr
 	output [3:0] rnext_id,
 
 	// signals other side
+	input next_rrq,
 	input [3:0] next_rid,
+	input rqfull_1,
 	output [127:0] rdat_m_data,
 	output reg rdat_m_valid,
 	output finish_mrd
@@ -45,9 +47,6 @@ module read_channels_mngr
 	);
 
 wire [5:0] a_atop; // output
-wire rnext_rq; // output
-wire [3:0] rnext_id; // output
-wire rqfull_1 = 1'b0;
 
 req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) read_req_chan_mngr (
 	.clk(clk),

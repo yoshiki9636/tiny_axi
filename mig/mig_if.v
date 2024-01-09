@@ -39,7 +39,7 @@ module mig_if (
 	input [127:0] wdq_rdata,
 	// rdq
 	output rdq_wen,
-	output [127:0] rdq_wdata,
+	output [127:0] rdq_wdata
 
 	);
 
@@ -61,6 +61,6 @@ assign wdq_rnext = app_wdf_wren & app_wdf_rdy;
 
 // read data
 assign rdq_wen = app_rd_data_valid;
-assign [127:0] rdq_wdata = app_rd_data;
+assign rdq_wdata = app_rd_data;
 
 endmodule

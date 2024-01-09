@@ -81,7 +81,7 @@ assign rd_bwt = qr_rd_bwt_addr[32];
 always @ (posedge clk or negedge rst_n) begin
 	if (~rst_n)
 		wadr  <= 2'd0;
-	else if (wen)
+	else if (qwen)
 		wadr  <= wadr + 2'd1;
 end
 
@@ -98,9 +98,9 @@ wire frg = (wadr < radr);
 
 //wire wqfull_0 = (wadr == radr);
 //wire wqfull_1 = (wg&(wadr - radr == 2'd1))|(rg&(radr - wadr <= 2'd3));
-wire wqfull_2 = (wg&(wadr - radr == 2'd2))|(rg&(radr - wadr <= 2'd2));
-wire wqfull_3 = (wg&(wadr - radr == 2'd4))|(rg&(radr - wadr <= 2'd1));
-assign wqfull,= wqfull_2 | wqfull_3 ;
+wire wqfull_2 = (fwg&(wadr - radr == 2'd2))|(frg&(radr - wadr <= 2'd2));
+wire wqfull_3 = (fwg&(wadr - radr == 2'd4))|(frg&(radr - wadr <= 2'd1));
+assign wqfull = wqfull_2 | wqfull_3 ;
 
 // qempty checker
 wire wqempty = (wadr == radr);

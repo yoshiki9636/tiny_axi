@@ -48,20 +48,23 @@ begin
 				1'b0: rdat_s_decode = `RDAT_SIDLE;
 				default: rdat_s_decode = `RDAT_SDEFO;
     		endcase
+		end
 		`RDAT_SBOUT: begin
-    		casex({bready, rcntr_2})
+    		casex({rready, rcntr_2})
 				2'b0x: rdat_s_decode = `RDAT_SBOUT;
 				2'b10: rdat_s_decode = `RDAT_SBOUT;
 				2'b11: rdat_s_decode = `RDAT_SBFIN;
 				default: rdat_s_decode = `RDAT_SDEFO;
     		endcase
+		end
 		`RDAT_SBFIN: begin
-    		casex({bready, rdata_s_valid})
+    		casex({rready, rdata_s_valid})
 				2'b0x: rdat_s_decode = `RDAT_SBFIN;
 				2'b10: rdat_s_decode = `RDAT_SIDLE;
 				2'b11: rdat_s_decode = `RDAT_SBOUT;
 				default: rdat_s_decode = `RDAT_SDEFO;
     		endcase
+		end
 		`RDAT_SDEFO: rdat_s_decode = `RDAT_SDEFO;
 		default:     rdat_s_decode = `RDAT_SDEFO;
    	endcase
@@ -104,9 +107,9 @@ always @ (posedge clk or negedge rst_n) begin
        rdata_lat  <= rdata_s_data;
 end
 
-assign  rdata = (burst_cntr == 2'd3) : rdata_lat[31:0] :
-                (burst_cntr == 2'd2) : rdata_lat[63:32] :
-                (burst_cntr == 2'd1) : rdata_lat[95:64] : rdata_lat[127:96];
+assign  rdata = (burst_cntr == 2'd3) ? rdata_lat[31:0] :
+                (burst_cntr == 2'd2) ? rdata_lat[63:32] :
+                (burst_cntr == 2'd1) ? rdata_lat[95:64] : rdata_lat[127:96];
 
 // id latch
 always @ (posedge clk or negedge rst_n) begin

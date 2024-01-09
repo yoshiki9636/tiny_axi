@@ -223,11 +223,10 @@ sfifo
 	.wen(rreqc_s_valid),
 	.wqfull(wid_wqfull),
 	.wdata(rreqc_s_id),
-	.rnext(rnext),
+	.rnext(finish_rdata_s),
 	.rqempty(wid_rqempty),
 	.rdata(rdata_s_id)
 	);
-wire rnext; // input
 
 // request queue in mclk
 wire req_rnext;

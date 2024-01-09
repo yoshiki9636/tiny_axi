@@ -48,6 +48,7 @@ begin
 				1'b0: wdat_m_decode = `WDAT_MIDLE;
 				default: wdat_m_decode = `WDAT_MDEFO;
     		endcase
+		end
 		`WDAT_MBOUT: begin
     		casex({wready, wcntr_2})
 				2'b0x: wdat_m_decode = `WDAT_MBOUT;
@@ -55,6 +56,7 @@ begin
 				2'b11: wdat_m_decode = `WDAT_MBFIN;
 				default: wdat_m_decode = `WDAT_MDEFO;
     		endcase
+		end
 		`WDAT_MBFIN: begin
     		casex({wready,next_rq})
 				2'b0x: wdat_m_decode = `WDAT_MBFIN;
@@ -62,13 +64,14 @@ begin
 				2'b11: wdat_m_decode = `WDAT_MBOUT;
 				default: wdat_m_decode = `WDAT_MDEFO;
     		endcase
+		end
 		`WDAT_MDEFO: wdat_m_decode = `WDAT_MDEFO;
 		default:     wdat_m_decode = `WDAT_MDEFO;
    	endcase
 end
 endfunction
 
-wire [1:0] wdat_m_next = wdat_m_decode( wdat_m_current, next_rq, a_ready, wcntr_2 );
+wire [1:0] wdat_m_next = wdat_m_decode( wdat_m_current, next_rq, wready, wcntr_2 );
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
@@ -105,9 +108,9 @@ always @ (posedge clk or negedge rst_n) begin
        wdata_lat  <= in_wdata;
 end
 
-assign  wdata = (burst_cntr == 2'd3) : wdata_lat[31:0] :
-                (burst_cntr == 2'd2) : wdata_lat[63:32] :
-                (burst_cntr == 2'd1) : wdata_lat[95:64] : wdata_lat[127:96];
+assign  wdata = (burst_cntr == 2'd3) ? wdata_lat[31:0] :
+                (burst_cntr == 2'd2) ? wdata_lat[63:32] :
+                (burst_cntr == 2'd1) ? wdata_lat[95:64] : wdata_lat[127:96];
 
 // id address keeper
 

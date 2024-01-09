@@ -55,12 +55,14 @@ begin
 				1'b0: reqc_m_decode = `REQC_MIDLE;
 				default: reqc_m_decode = `REQC_MDEFO;
     		endcase
+		end
 		`REQC_MAREQ: begin
     		case(gnt_rq)
 				1'b1: reqc_m_decode = `REQC_MBOUT;
 				1'b0: reqc_m_decode = `REQC_MAREQ;
 				default: reqc_m_decode = `REQC_MDEFO;
     		endcase
+		end
 		`REQC_MBOUT: begin
     		casex({a_ready,start_rq})
 				2'b0x: reqc_m_decode = `REQC_MBOUT;
@@ -68,6 +70,7 @@ begin
 				2'b11: reqc_m_decode = `REQC_MAREQ;
 				default: reqc_m_decode = `REQC_MDEFO;
     		endcase
+		end
 		`REQC_MDEFO: reqc_m_decode = `REQC_MDEFO;
 		default:     reqc_m_decode = `REQC_MDEFO;
    	endcase

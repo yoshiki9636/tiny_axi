@@ -11,7 +11,7 @@
 module sfifo_1r1w
 	#(parameter SFIFODW = 32,
 	  parameter SFIFOAW = 2,
-	  parameter SFIFODP = 4,
+	  parameter SFIFODP = 4
     ) (
 	input clk,
 	input [SFIFOAW-1:0] ram_radr,

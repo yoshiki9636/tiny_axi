@@ -47,13 +47,14 @@ begin
 				1'b0: resp_s_decode = `RESP_SIDLE;
 				default: resp_s_decode = `RESP_SDEFO;
     		endcase
-
+		end
 		`RESP_SBOUT: begin
     		case(bready)
 				1'b1: resp_s_decode = `RESP_SIDLE;
 				1'b0: resp_s_decode = `RESP_SBOUT;
 				default: resp_s_decode = `RESP_SDEFO;
     		endcase
+		end
 		`RESP_SDEFO: resp_s_decode = `RESP_SDEFO;
 		default:     resp_s_decode = `RESP_SDEFO;
    	endcase

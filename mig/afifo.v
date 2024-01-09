@@ -44,14 +44,14 @@ always @ (posedge wclk or negedge wrst_n) begin
 		wadr  <= wadr + 2'd1;
 end
 
-wire [1:0] gwadr = { wadr[1], wadr[1} ^ wadr[0] } ;
+wire [1:0] gwadr = { wadr[1], wadr[1] ^ wadr[0] };
 
 reg [1:0] gwadr_l0;
 reg [1:0] gwadr_l1;
 reg [1:0] gwadr_l2;
 
 always @ (posedge wclk or negedge wrst_n) begin
-	if (~wrst_n) begin
+	if (~wrst_n)
 		gwadr_l0  <= 2'd0;
 	else
 		gwadr_l0  <= gwadr;
@@ -69,7 +69,7 @@ always @ (posedge rclk or negedge rrst_n) begin
 	end
 end
 
-wire [1:0] bwadr = { gwadr_l2[1], gwadr_l2[1} ^ gwadr_l2[0] } ;
+wire [1:0] bwadr = { gwadr_l2[1], gwadr_l2[1] ^ gwadr_l2[0] } ;
 
 always @ (posedge rclk or negedge rrst_n) begin
 	if (~rrst_n)
@@ -78,7 +78,7 @@ always @ (posedge rclk or negedge rrst_n) begin
 		radr  <= radr + 2'd1;
 end
 
-wire [1:0] gradr = { radr[1], radr[1} ^ radr[0] } ;
+wire [1:0] gradr = { radr[1], radr[1] ^ radr[0] } ;
 
 reg [1:0] gradr_l0;
 reg [1:0] gradr_l1;
@@ -103,7 +103,7 @@ always @ (posedge wclk or negedge wrst_n) begin
 	end
 end
 
-wire [1:0] bradr = { gradr_l2[1], gradr_l2[1} ^ gradr_l2[0] } ;
+wire [1:0] bradr = { gradr_l2[1], gradr_l2[1] ^ gradr_l2[0] } ;
 
 // qfull checker
 wire fwg = (wadr > bradr);
@@ -111,9 +111,9 @@ wire frg = (wadr < bradr);
 
 //wire wqfull_0 = (wadr == bradr);
 //wire wqfull_1 = (wg&(wadr - bradr == 2'd1))|(rg&(bradr - wadr <= 2'd3));
-wire wqfull_2 = (wg&(wadr - bradr == 2'd2))|(rg&(bradr - wadr <= 2'd2));
-wire wqfull_3 = (wg&(wadr - bradr == 2'd3))|(rg&(bradr - wadr <= 2'd1));
-assign wqfull,= wqfull_2 | wqfull_3 ;
+wire wqfull_2 = (fwg&(wadr - bradr == 2'd2))|(frg&(bradr - wadr <= 2'd2));
+wire wqfull_3 = (fwg&(wadr - bradr == 2'd3))|(frg&(bradr - wadr <= 2'd1));
+assign wqfull = wqfull_2 | wqfull_3 ;
 
 // qempty checker
 wire wqempty = (bwadr == radr);
