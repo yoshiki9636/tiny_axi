@@ -73,7 +73,7 @@ wire rreqc_s_valid; // output
 wire [31:0] rreqc_s_addr; // output
 wire [3:0] rreqc_s_id; // output
 
-wire rdqfull_1; // not used
+//wire rdqfull_1; // not used
 wire rdata_s_valid; // input
 wire [3:0] rdata_s_id; // input
 wire [127:0] rdata_s_data; // input
@@ -128,7 +128,7 @@ read_channels_subo read_channels_subo (
 	);
 
 // write address queue
-wire req_wqfull; // output
+//wire req_wqfull; // output
 wire wadr_rqempty;
 wire wcmd_wen;
 wire wcmd_ack;
@@ -235,8 +235,8 @@ wire [31:0] req_qraddr;
 wire req_rd_bwt;
 
 req_queue req_queue (
-	.clk(clk),
-	.rst_n(rst_n),
+	.mclk(mclk),
+	.mrst_n(mrst_n),
 	.wcmd_wen(wcmd_wen),
 	.rcmd_wen(rcmd_wen),
 	.wcmd_ack(wcmd_ack),

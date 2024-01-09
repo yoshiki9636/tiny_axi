@@ -65,6 +65,6 @@ wire wqfull_3 = (fwg&(wadr - radr == SFIFODP-1))|(frg&(radr - wadr <= 1));
 assign wqfull = wqfull_2 | wqfull_3 ;
 
 // qempty checker
-wire wqempty = (wadr == radr);
+assign rqempty = (wadr == radr);
 
 endmodule

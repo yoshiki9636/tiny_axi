@@ -111,6 +111,10 @@ assign  rdata = (burst_cntr == 2'd3) ? rdata_lat[31:0] :
                 (burst_cntr == 2'd2) ? rdata_lat[63:32] :
                 (burst_cntr == 2'd1) ? rdata_lat[95:64] : rdata_lat[127:96];
 
+assign rlast = (rdat_s_current == `RDAT_SBFIN);
+
+assign finish_rdata_s = rlast & rready;
+
 // id latch
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)

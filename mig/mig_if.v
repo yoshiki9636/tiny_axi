@@ -44,6 +44,14 @@ module mig_if (
 	);
 
 // MIG interface
+reg req_rd_bwt_lat;
+always @ (posedge mclk or negedge mrst_n) begin
+    if (~mrst_n)
+        req_rd_bwt_lat  <= 2'd0;
+    else if (req_rnext)
+        req_rd_bwt_lat  <= req_rd_bwt;
+end
+
 // request
 assign app_addr = req_qraddr [27:0] ;
 assign app_cmd = { 2'b00, req_rd_bwt };
@@ -54,7 +62,7 @@ assign req_rnext = app_en & app_rdy;
 // write data
 assign app_wdf_data = wdq_rdata;
 assign app_wdf_mask = 16'h0000; // no mask
-assign app_wdf_wren = ~wdq_rqempty & ~req_rd_bwt;
+assign app_wdf_wren = ~wdq_rqempty & ~req_rd_bwt_lat;
 assign app_wdf_end = app_wdf_wren; // data 128bit only
 
 assign wdq_rnext = app_wdf_wren & app_wdf_rdy;

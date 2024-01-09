@@ -30,7 +30,7 @@ assign a_ready = ~qfull_1;
 
 wire id_addr_wen = a_valid & a_ready;
 reg [35:0] id_addr_lat;
-
+reg id_addr_wen_1lat;
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
@@ -39,7 +39,14 @@ always @ (posedge clk or negedge rst_n) begin
 		id_addr_lat <= { a_id, a_addr };
 end
 
-assign reqc_s_valid = id_addr_wen;
+always @ (posedge clk or negedge rst_n) begin
+    if (~rst_n)
+        id_addr_wen_1lat <= 1'b0;
+    else
+		id_addr_wen_1lat <= id_addr_wen;
+end
+
+assign reqc_s_valid = id_addr_wen_1lat;
 assign reqc_s_id = id_addr_lat[35:32];
 assign reqc_s_addr = id_addr_lat[31:0];
 

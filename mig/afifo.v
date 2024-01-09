@@ -116,6 +116,6 @@ wire wqfull_3 = (fwg&(wadr - bradr == 2'd3))|(frg&(bradr - wadr <= 2'd1));
 assign wqfull = wqfull_2 | wqfull_3 ;
 
 // qempty checker
-wire wqempty = (bwadr == radr);
+assign rqempty = (bwadr == radr);
 
 endmodule

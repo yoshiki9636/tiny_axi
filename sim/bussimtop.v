@@ -14,16 +14,12 @@ reg clk;
 reg rst_n;
 reg mclk;
 reg mrst_n;
-wire rx = 1'b0;
-wire tx;
-reg interrupt_0;
-wire [2:0] rgb_led;
 
 initial clk = 0;
 initial mclk = 0;
 
 always #5 clk <= ~clk;
-always #7 mclk <= ~mclk;
+always #4 mclk <= ~mclk;
 
 // MIG interface
 wire [27:0] app_addr; // output
@@ -50,9 +46,10 @@ wire finish_wresp; // output
 // axi read bus manager
 reg rstart_rq; // input
 reg [31:0] rin_addr; // input
-wire rnext_rq; // output
+//wire rnext_rq; // output
 wire [3:0] rnext_id; // output
 //reg [3:0] next_rid; // input
+reg rqfull_1;
 wire [127:0] rdat_m_data; // output
 wire rdat_m_valid; // output
 
@@ -66,6 +63,7 @@ initial begin
 	in_wdata = 128'd0;
 
 	rstart_rq = 1'b0;
+	rqfull_1 = 1'b0;
 	rin_addr = 32'd0;
 
 	rst_n = 1'b1;
@@ -80,10 +78,12 @@ initial begin
 
 	wstart_rq = 1'b1;
 	win_addr = 32'hdeadbeef;
-	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
 #10
 	wstart_rq = 1'b0;
 	win_addr = 32'd0;
+#10
+	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
+#10
 	in_wdata = 128'd0;
 
 #5000
@@ -209,9 +209,10 @@ read_channels_mngr read_channels_mngr (
 	.rlast(rlast),
 	.rstart_rq(rstart_rq),
 	.rin_addr(rin_addr),
-	.rnext_rq(rnext_rq),
+	//.rnext_rq(rnext_rq),
 	.rnext_id(rnext_id),
 	.next_rid(rnext_id), // kari
+	.rqfull_1(rqfull_1),
 	.rdat_m_data(rdat_m_data),
 	.rdat_m_valid(rdat_m_valid),
 	.finish_mrd(finish_mrd)
