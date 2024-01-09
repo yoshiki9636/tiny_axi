@@ -44,10 +44,11 @@ module write_channels_mngr
 
 	);
 
-wire wnext_rq; // output
-wire [3:0] wnext_id; // output
-wire finish_wd; // output
-wire [3:0] finish_id; // output
+wire wnext_rq;
+wire [3:0] wnext_id;
+wire [127:0] wnext_data;
+wire finish_wd;
+wire [3:0] finish_id;
 
 req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) write_req_chan_mngr (
 	.clk(clk),
@@ -61,8 +62,11 @@ req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) write_req_chan_mngr (
 	.a_atop(awatop),
 	.start_rq(wstart_rq),
 	.in_addr(win_addr),
+	.in_data(in_wdata),
 	.next_rq(wnext_rq),
-	.next_id(wnext_id)
+	.next_id(wnext_id),
+	.next_data(wnext_data),
+	.ren_id_data(finish_wd)
 	);
 
 wdata_chan_mngr wdata_chan_mngr (
@@ -74,7 +78,7 @@ wdata_chan_mngr wdata_chan_mngr (
 	.wlast(wlast),
 	.next_rq(wnext_rq),
 	.next_id(wnext_id),
-	.in_wdata(in_wdata),
+	.next_wdata(wnext_data),
 	.finish_wd(finish_wd),
 	.finish_id(finish_id)
 	);

@@ -26,11 +26,11 @@ module arbitor3 (
 	);
 
 `define ARB3_IDL012 3'b000
-`define ARB3_SEL012 3'b001
-`define ARB3_IDL120 3'b010
-`define ARB3_SEL120 3'b011
-`define ARB3_IDL201 3'b100
-`define ARB3_SEL201 3'b101
+`define ARB3_SEL012 3'b100
+`define ARB3_IDL120 3'b001
+`define ARB3_SEL120 3'b101
+`define ARB3_IDL201 3'b010
+`define ARB3_SEL201 3'b110
 `define ARB3_SELDEF 3'b111
 
 // round robin state machine
@@ -45,57 +45,57 @@ input finish;
 begin
     case(arbit3_current)
 		`ARB3_IDL012: begin
-    		casex({req0,req1,req2})
-				3'b1xx: arbit3_decode = `ARB3_SEL012;
-				3'b01x: arbit3_decode = `ARB3_SEL120;
+    		casez({req0,req1,req2})
+				3'b1??: arbit3_decode = `ARB3_SEL012;
+				3'b01?: arbit3_decode = `ARB3_SEL120;
 				3'b001: arbit3_decode = `ARB3_SEL201;
 				3'b000: arbit3_decode = `ARB3_IDL012;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
 		end
 		`ARB3_SEL012: begin
-    		casex({finish,req1,req2,req0})
-				4'b0xxx: arbit3_decode = `ARB3_SEL012;
-				4'b11xx: arbit3_decode = `ARB3_SEL120;
-				4'b101x: arbit3_decode = `ARB3_SEL201;
+    		casez({finish,req1,req2,req0})
+				4'b0???: arbit3_decode = `ARB3_SEL012;
+				4'b11??: arbit3_decode = `ARB3_SEL120;
+				4'b101?: arbit3_decode = `ARB3_SEL201;
 				4'b1001: arbit3_decode = `ARB3_SEL012;
 				4'b1000: arbit3_decode = `ARB3_IDL120;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
 		end
 		`ARB3_IDL120: begin
-    		casex({req1,req2,req0})
-				3'b1xx: arbit3_decode = `ARB3_SEL120;
-				3'b01x: arbit3_decode = `ARB3_SEL201;
+    		casez({req1,req2,req0})
+				3'b1??: arbit3_decode = `ARB3_SEL120;
+				3'b01?: arbit3_decode = `ARB3_SEL201;
 				3'b001: arbit3_decode = `ARB3_SEL012;
 				3'b000: arbit3_decode = `ARB3_IDL120;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
 		end
 		`ARB3_SEL120: begin
-    		casex({finish,req2,req0,req1})
-				4'b0xxx: arbit3_decode = `ARB3_SEL120;
-				4'b11xx: arbit3_decode = `ARB3_SEL201;
-				4'b101x: arbit3_decode = `ARB3_SEL012;
+    		casez({finish,req2,req0,req1})
+				4'b0???: arbit3_decode = `ARB3_SEL120;
+				4'b11??: arbit3_decode = `ARB3_SEL201;
+				4'b101?: arbit3_decode = `ARB3_SEL012;
 				4'b1001: arbit3_decode = `ARB3_SEL120;
 				4'b1000: arbit3_decode = `ARB3_IDL201;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
 		end
 		`ARB3_IDL201: begin
-    		casex({req2,req0,req1})
-				3'b1xx: arbit3_decode = `ARB3_SEL201;
-				3'b01x: arbit3_decode = `ARB3_SEL012;
+    		casez({req2,req0,req1})
+				3'b1??: arbit3_decode = `ARB3_SEL201;
+				3'b01?: arbit3_decode = `ARB3_SEL012;
 				3'b001: arbit3_decode = `ARB3_SEL120;
 				3'b000: arbit3_decode = `ARB3_IDL201;
 				default: arbit3_decode = `ARB3_SELDEF;
     		endcase
 		end
 		`ARB3_SEL201: begin
-    		casex({finish,req0,req1,req2})
-				4'b0xxx: arbit3_decode = `ARB3_SEL201;
-				4'b11xx: arbit3_decode = `ARB3_SEL012;
-				4'b101x: arbit3_decode = `ARB3_SEL120;
+    		casez({finish,req0,req1,req2})
+				4'b0???: arbit3_decode = `ARB3_SEL201;
+				4'b11??: arbit3_decode = `ARB3_SEL012;
+				4'b101?: arbit3_decode = `ARB3_SEL120;
 				4'b1001: arbit3_decode = `ARB3_SEL201;
 				4'b1000: arbit3_decode = `ARB3_IDL012;
 				default: arbit3_decode = `ARB3_SELDEF;
@@ -132,14 +132,14 @@ always @ (posedge clk or negedge rst_n) begin
 	end
     else begin
         sel0_post <= sel0_pre;
-        sel1_post <= sel0_pre;
-        sel2_post <= sel0_pre;
+        sel1_post <= sel1_pre;
+        sel2_post <= sel2_pre;
 	end
 end
 
-assign gnt0 = sel0_pre & ~sel0_post;
-assign gnt1 = sel1_pre & ~sel1_post;
-assign gnt2 = sel2_pre & ~sel2_post;
+assign gnt0 = (~arbit3_current[2]|finish)&(arbit3_next == `ARB3_SEL012);
+assign gnt1 = (~arbit3_current[2]|finish)&(arbit3_next == `ARB3_SEL120);
+assign gnt2 = (~arbit3_current[2]|finish)&(arbit3_next == `ARB3_SEL201);
 
 assign sel = { sel2_post, sel1_post, sel0_post };
 

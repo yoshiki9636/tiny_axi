@@ -20,9 +20,10 @@ module wdata_chan_mngr (
 	// signals other side
 	input next_rq,
 	input [3:0] next_id,
-	input [127:0] in_wdata,
+	input [127:0] next_wdata,
 	output finish_wd,
-	output reg [3:0] finish_id
+	output [3:0] finish_id
+	//output reg [3:0] finish_id
 
 	);
 
@@ -98,27 +99,21 @@ end
 
 assign wcntr_2 = (burst_cntr == 2'd1);
 
-// write data buffer
-reg [127:0] wdata_lat;
+// wdata selecter
 
-always @ (posedge clk or negedge rst_n) begin
-    if (~rst_n)
-       wdata_lat  <= 128'd0;
-    else if (next_rq)
-       wdata_lat  <= in_wdata;
-end
-
-assign  wdata = (burst_cntr == 2'd3) ? wdata_lat[31:0] :
-                (burst_cntr == 2'd2) ? wdata_lat[63:32] :
-                (burst_cntr == 2'd1) ? wdata_lat[95:64] : wdata_lat[127:96];
+assign  wdata = (burst_cntr == 2'd3) ? next_wdata[31:0] :
+                (burst_cntr == 2'd2) ? next_wdata[63:32] :
+                (burst_cntr == 2'd1) ? next_wdata[95:64] : next_wdata[127:96];
 
 // id address keeper
 
-always @ (posedge clk or negedge rst_n) begin
-    if (~rst_n)
-       finish_id  <= 4'd0;
-    else if (next_rq)
-       finish_id  <= next_id;
-end
+assign finish_id = next_id;
+
+//always @ (posedge clk or negedge rst_n) begin
+    //if (~rst_n)
+       //finish_id  <= 4'd0;
+    //else if (finish_wd)
+       //finish_id  <= next_id;
+//end
 
 endmodule
