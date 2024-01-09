@@ -40,7 +40,7 @@ module write_channels_subo (
 
 	);
 
-wire [3:0] reqc_s_id;
+wire [3:0] wreqc_s_id;
 wire finish_swd;
 
 req_chan_subo write_req_chan_subo (

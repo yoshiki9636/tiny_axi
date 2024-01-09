@@ -45,7 +45,7 @@ module dram_top (
 	// write response
     output bvalid,
     input  bready,
-    output reg [3:0] bid,
+    output [3:0] bid,
     output bcomp,
 	// read request
     input arvalid,
@@ -55,7 +55,7 @@ module dram_top (
 	// read data
     output rvalid,
     input  rready,
-    output reg [3:0] rid,
+    output [3:0] rid,
     output [31:0] rdata,
     output rlast
 

@@ -20,7 +20,7 @@ module read_channels_subo (
 	// bus signals
 	output rvalid,
 	input  rready,
-	output reg [3:0] rid,
+	output [3:0] rid,
 	output [31:0] rdata,
 	output rlast,
 
@@ -37,6 +37,8 @@ module read_channels_subo (
 	output finish_rdata_s
 
 	);
+
+wire [5:0] aratop;
 
 req_chan_subo read_req_chan_subo (
 	.clk(clk),

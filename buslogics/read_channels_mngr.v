@@ -22,7 +22,7 @@ module read_channels_mngr
 	output arvalid,
 	input  arready,
 	output [3:0] arid,
-	output reg [31:0] araddr,
+	output [31:0] araddr,
 	// read data signals
 	input rvalid,
 	output  rready,
@@ -41,7 +41,7 @@ module read_channels_mngr
 	input [3:0] next_rid,
 	input rqfull_1,
 	output [127:0] rdat_m_data,
-	output reg rdat_m_valid,
+	output rdat_m_valid,
 	output finish_mrd
 
 	);

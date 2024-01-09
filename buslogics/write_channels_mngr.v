@@ -21,7 +21,7 @@ module write_channels_mngr
 	output awvalid,
 	input  awready,
 	output [3:0] awid,
-	output reg [31:0] awaddr,
+	output [31:0] awaddr,
 	output [5:0] awatop,
 	// write data signals
 	output wvalid,
