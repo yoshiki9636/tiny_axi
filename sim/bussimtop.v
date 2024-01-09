@@ -12,6 +12,8 @@ module bussimtop;
 
 reg clk;
 reg rst_n;
+reg mclk;
+reg mrst_n;
 wire rx = 1'b0;
 wire tx;
 reg interrupt_0;
@@ -78,7 +80,7 @@ initial begin
 
 	wstart_rq = 1'b1;
 	win_addr = 32'hdeadbeef;
-	in_wdata = 128'h44444444_33333333_22222222_111111111;
+	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
 #10
 	wstart_rq = 1'b0;
 	win_addr = 32'd0;
