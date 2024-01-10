@@ -58,10 +58,9 @@ begin
     		endcase
 		end
 		`RDAT_SBFIN: begin
-    		casex({rready, rdata_s_valid})
-				2'b0x: rdat_s_decode = `RDAT_SBFIN;
-				2'b10: rdat_s_decode = `RDAT_SIDLE;
-				2'b11: rdat_s_decode = `RDAT_SBOUT;
+    		casex(rready)
+				1'b0: rdat_s_decode = `RDAT_SBFIN;
+				1'b1: rdat_s_decode = `RDAT_SIDLE;
 				default: rdat_s_decode = `RDAT_SDEFO;
     		endcase
 		end
@@ -81,7 +80,7 @@ always @ (posedge clk or negedge rst_n) begin
 end
 
 assign rvalid = (rdat_s_current == `RDAT_SBOUT)|(rdat_s_current == `RDAT_SBFIN);
-wire next_ok = (rdat_s_current == `RDAT_SIDLE)|((rdat_s_current == `RDAT_SBFIN)&rready);
+wire next_ok = (rdat_s_current == `RDAT_SIDLE);
 
 // burst counter just spport 4
 reg [1:0] burst_cntr;

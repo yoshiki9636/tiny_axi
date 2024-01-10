@@ -46,7 +46,9 @@ module read_channels_mngr
 
 	);
 
-wire [5:0] aratop; // output
+wire [5:0] aratop;
+wire [127:0] rin_data = 128'd0;
+wire [127:0] next_data;
 
 req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) read_req_chan_mngr (
 	.clk(clk),
@@ -60,8 +62,11 @@ req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) read_req_chan_mngr (
 	.a_atop(aratop),
 	.start_rq(rstart_rq),
 	.in_addr(rin_addr),
+	.in_data(rin_data),
 	.next_rq(rnext_rq),
-	.next_id(rnext_id)
+	.next_id(rnext_id),
+	.next_data(next_data),
+	.ren_id_data(finish_mrd)
 	);
 
 rdata_chan_mngr rdata_chan_mngr (

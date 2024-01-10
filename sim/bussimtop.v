@@ -16,10 +16,10 @@ reg mclk;
 reg mrst_n;
 
 initial clk = 0;
-initial mclk = 0;
+initial mclk = 1;
 
 always #5 clk <= ~clk;
-always #4 mclk <= ~mclk;
+always #5 mclk <= ~mclk;
 
 // MIG interface
 wire [27:0] app_addr; // output
@@ -68,7 +68,7 @@ initial begin
 
 	rst_n = 1'b1;
 	mrst_n = 1'b1;
-#10
+#11
 	rst_n = 1'b0;
 	mrst_n = 1'b0;
 #20
@@ -76,19 +76,50 @@ initial begin
 	mrst_n = 1'b1;
 #20
 
+	rstart_rq = 1'b1;
+	rin_addr = 32'hdeaddead;
+
+#10
+	rin_addr = 32'hbeefbeef;
+#10
+	rstart_rq = 1'b0;
+
+#10
 	wstart_rq = 1'b1;
 	win_addr = 32'hdeadbeef;
-#10
-	wstart_rq = 1'b0;
-	win_addr = 32'd0;
-#10
 	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
 #10
+	win_addr = 32'hbeefdead;
+	in_wdata = 128'h8888_8888_7777_7777_6666_6666_5555_5555;
+#10
+	wstart_rq = 1'b0;
+	win_addr = 32'h00000000;
 	in_wdata = 128'd0;
+
+#300
+	app_rd_data = 128'h9999_9999_aaaa_aaaa_bbbb_bbbb_cccc_cccc;
+	app_rd_data_end = 1'b1;
+	app_rd_data_valid = 1'b1;
+#10
+	app_rd_data = 128'd0;
+	app_rd_data_end = 1'b0;
+	app_rd_data_valid = 1'b0;
+#100
+	app_rd_data = 128'hdddd_dddd_eeee_eeee_ffff_ffff_0101_0101;
+	app_rd_data_end = 1'b1;
+	app_rd_data_valid = 1'b1;
+#10
+	app_rd_data = 128'd0;
+	app_rd_data_end = 1'b0;
+	app_rd_data_valid = 1'b0;
 
 #5000
 	$stop;
 end
+
+
+
+
 
 
 // arbiter signals
