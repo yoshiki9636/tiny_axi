@@ -21,6 +21,22 @@ initial mclk = 1;
 always #5 clk <= ~clk;
 always #5 mclk <= ~mclk;
 
+// MIG interface
+wire [27:0] app_addr; // output
+wire [2:0] app_cmd; // output
+wire app_en; // output
+wire app_rdy = 1'b1; // input
+
+wire [127:0] app_wdf_data; // output
+wire [15:0] app_wdf_mask; // output
+wire app_wdf_wren; // output
+wire app_wdf_end; // output
+wire app_wdf_rdy = 1'b1; // input
+
+reg [127:0] app_rd_data; // input
+reg app_rd_data_end; // input
+reg app_rd_data_valid; // input
+
 // axi write bus manager
 reg wstart_rq; // input
 reg [31:0] win_addr; // input
@@ -38,6 +54,9 @@ wire [127:0] rdat_m_data; // output
 wire rdat_m_valid; // output
 
 initial begin
+	app_rd_data = 128'd0;
+	app_rd_data_end = 1'b0;
+	app_rd_data_valid = 1'b0;
 
 	wstart_rq = 1'b0;
 	win_addr = 32'd0;
@@ -57,43 +76,51 @@ initial begin
 	mrst_n = 1'b1;
 #20
 
+	rstart_rq = 1'b1;
+	rin_addr = 32'hdeaddead;
+
+#10
+	rin_addr = 32'hbeefbeef;
+#10
+	rstart_rq = 1'b0;
+
+#10
 	wstart_rq = 1'b1;
-	win_addr = 32'h0000_0100;
+	win_addr = 32'hdeadbeef;
 	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
 #10
-	win_addr = 32'h0000_0200;
+	win_addr = 32'hbeefdead;
 	in_wdata = 128'h8888_8888_7777_7777_6666_6666_5555_5555;
 #10
 	wstart_rq = 1'b0;
 	win_addr = 32'h00000000;
 	in_wdata = 128'd0;
 
+#300
+	app_rd_data = 128'h9999_9999_aaaa_aaaa_bbbb_bbbb_cccc_cccc;
+	app_rd_data_end = 1'b1;
+	app_rd_data_valid = 1'b1;
+#10
+	app_rd_data = 128'd0;
+	app_rd_data_end = 1'b0;
+	app_rd_data_valid = 1'b0;
 #100
-	rstart_rq = 1'b1;
-	rin_addr = 32'h0000_0200;
-
+	app_rd_data = 128'hdddd_dddd_eeee_eeee_ffff_ffff_0101_0101;
+	app_rd_data_end = 1'b1;
+	app_rd_data_valid = 1'b1;
 #10
-	rin_addr = 32'h0000_0100;
-#10
-	rstart_rq = 1'b0;
+	app_rd_data = 128'd0;
+	app_rd_data_end = 1'b0;
+	app_rd_data_valid = 1'b0;
 
 #5000
 	$stop;
 end
 
-// MIG interface
-wire [27:0] app_addr; // input
-wire [2:0] app_cmd; // input
-wire app_en; // input
-wire app_rdy; // output
-wire [127:0] app_wdf_data; // input
-wire [15:0] app_wdf_mask; // input
-wire app_wdf_wren; // input
-wire app_wdf_end; // input
-wire app_wdf_rdy; // output
-wire [127:0] app_rd_data; // output
-wire app_rd_data_end; // output
-wire app_rd_data_valid; // output
+
+
+
+
 
 // arbiter signals
 wire req_dc_wt;
@@ -131,22 +158,6 @@ wire [3:0] rid;
 wire [31:0] rdata;
 wire rlast;
 
-dummy_mig dummy_mig (
-	.mclk(mclk),
-	.mrst_n(mrst_n),
-	.app_addr(app_addr),
-	.app_cmd(app_cmd),
-	.app_en(app_en),
-	.app_rdy(app_rdy),
-	.app_wdf_data(app_wdf_data),
-	.app_wdf_mask(app_wdf_mask),
-	.app_wdf_wren(app_wdf_wren),
-	.app_wdf_end(app_wdf_end),
-	.app_wdf_rdy(app_wdf_rdy),
-	.app_rd_data(app_rd_data),
-	.app_rd_data_end(app_rd_data_end),
-	.app_rd_data_valid(app_rd_data_valid)
-	);
 
 dram_top dram_top (
 	.mclk(mclk),

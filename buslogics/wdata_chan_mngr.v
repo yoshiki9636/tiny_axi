@@ -93,7 +93,7 @@ always @ (posedge clk or negedge rst_n) begin
         burst_cntr <= 2'd0;
     else if (next_rq)
         burst_cntr <= 2'd3;
-    else if (burst_cntr > 2'd0)
+    else if ((burst_cntr > 2'd0)&wready)
         burst_cntr <= burst_cntr - 2'd1;
 end
 

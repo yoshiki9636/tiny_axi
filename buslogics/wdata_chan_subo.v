@@ -38,7 +38,7 @@ reg [2:0] wdat_s_current;
 function [2:0] wdat_s_decode;
 input [2:0] wdat_s_current;
 input next_srq;
-input wready;
+input wvalid;
 input wlast;
 input sqfull_1;
 begin
@@ -51,7 +51,7 @@ begin
     		endcase
 		end
 		`WDAT_SBINP: begin
-    		casex({wready, wlast, sqfull_1, next_srq})
+    		casex({wvalid, wlast, sqfull_1, next_srq})
 				4'b0xxx: wdat_s_decode = `WDAT_SBINP;
 				4'b10xx: wdat_s_decode = `WDAT_SBINP;
 				4'b1100: wdat_s_decode = `WDAT_SIDLE;
@@ -62,7 +62,7 @@ begin
     		endcase
 		end
 		`WDAT_SLST1: begin
-    		casex({wready, wlast,sqfull_1,next_srq})
+    		casex({wvalid, wlast,sqfull_1,next_srq})
 				4'b0xxx: wdat_s_decode = `WDAT_SLST1;
 				4'b10xx: wdat_s_decode = `WDAT_SLST1;
 				4'b111x: wdat_s_decode = `WDAT_SBUSY;
@@ -85,7 +85,7 @@ begin
 end
 endfunction
 
-wire [2:0] wdat_s_next = wdat_s_decode( wdat_s_current, next_srq, wready, wlast, sqfull_1 );
+wire [2:0] wdat_s_next = wdat_s_decode( wdat_s_current, next_srq, wvalid, wlast, sqfull_1 );
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
@@ -102,7 +102,7 @@ reg [1:0] burst_cntr;
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
         burst_cntr <= 2'd0;
-    else if (wlast & wready)
+    else if (wlast & wvalid)
         burst_cntr <= 2'd0;
     else if (wready & wvalid)
         burst_cntr <= burst_cntr + 2'd1;
