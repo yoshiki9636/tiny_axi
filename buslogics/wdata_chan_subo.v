@@ -170,6 +170,6 @@ always @ (posedge clk or negedge rst_n) begin
 end
 
 assign wdat_s_data = { wdata_ofs3[31:0], wdata_ofs2[31:0], wdata_ofs1[31:0], wdata_ofs0[31:0] };
-assign wdat_s_mask = { wdata_ofs3[35:32], wdata_ofs2[35:32], wdata_ofs1[35:32], wdata_ofs0[35:32] };
+assign wdat_s_mask = { ~wdata_ofs3[35:32], ~wdata_ofs2[35:32], ~wdata_ofs1[35:32], ~wdata_ofs0[35:32] };
 
 endmodule
