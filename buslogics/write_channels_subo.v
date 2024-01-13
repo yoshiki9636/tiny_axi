@@ -22,6 +22,7 @@ module write_channels_subo (
 	input wvalid,
 	output  wready,
 	input [31:0] wdata,
+	input [3:0] wstrb,
 	input wlast,
 	// response signals
 	output bvalid,
@@ -36,6 +37,7 @@ module write_channels_subo (
 	// wdata signals other side
 	input sqfull_1,
 	output [127:0] wdat_s_data,
+	output [15:0] wdat_s_mask,
 	output wdat_s_valid
 
 	);
@@ -63,10 +65,12 @@ wdata_chan_subo wdata_chan_subo (
 	.wvalid(wvalid),
 	.wready(wready),
 	.wdata(wdata),
+	.wstrb(wstrb),
 	.wlast(wlast),
 	.next_srq(wreqc_s_valid),
 	.sqfull_1(sqfull_1),
 	.wdat_s_data(wdat_s_data),
+	.wdat_s_mask(wdat_s_mask),
 	.wdat_s_valid(wdat_s_valid),
 	.finish_swd(finish_swd)
 	);

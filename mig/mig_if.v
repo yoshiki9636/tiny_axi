@@ -36,7 +36,7 @@ module mig_if (
 	// wdq
 	output wdq_rnext,
 	input wdq_rqempty,
-	input [127:0] wdq_rdata,
+	input [143:0] wdq_mask_rdata,
 	// rdq
 	output rdq_wen,
 	output [127:0] rdq_wdata
@@ -60,8 +60,8 @@ assign app_en = ~req_rqempty;
 assign req_rnext = app_en & app_rdy;
 
 // write data
-assign app_wdf_data = wdq_rdata;
-assign app_wdf_mask = 16'h0000; // no mask
+assign app_wdf_data = wdq_mask_rdata[127:0];
+assign app_wdf_mask = wdq_mask_rdata[143:128];
 assign app_wdf_wren = ~wdq_rqempty & ~req_rd_bwt_lat;
 assign app_wdf_end = app_wdf_wren; // data 128bit only
 

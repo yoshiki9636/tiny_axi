@@ -27,6 +27,7 @@ module write_channels_mngr
 	output wvalid,
 	input  wready,
 	output [31:0] wdata,
+	output [3:0] wstrb,
 	output wlast,
 	// write response signals
 	input bvalid,
@@ -39,6 +40,7 @@ module write_channels_mngr
 	input [31:0] win_addr,
 	// write data
 	input [127:0] in_wdata,
+	input [15:0] in_mask,
 	// write response
 	output finish_wresp
 
@@ -47,6 +49,7 @@ module write_channels_mngr
 wire wnext_rq;
 wire [3:0] wnext_id;
 wire [127:0] wnext_data;
+wire [15:0] wnext_mask;
 wire finish_wd;
 wire [3:0] finish_id;
 
@@ -63,9 +66,11 @@ req_chan_mngr #(.REQC_M_ID(REQC_M_ID)) write_req_chan_mngr (
 	.start_rq(wstart_rq),
 	.in_addr(win_addr),
 	.in_data(in_wdata),
+	.in_mask(in_mask),
 	.next_rq(wnext_rq),
 	.next_id(wnext_id),
 	.next_data(wnext_data),
+	.next_mask(wnext_mask),
 	.ren_id_data(finish_wd)
 	);
 
@@ -75,10 +80,12 @@ wdata_chan_mngr wdata_chan_mngr (
 	.wvalid(wvalid),
 	.wready(wready),
 	.wdata(wdata),
+	.wstrb(wstrb),
 	.wlast(wlast),
 	.next_rq(wnext_rq),
 	.next_id(wnext_id),
 	.next_wdata(wnext_data),
+	.next_mask(wnext_mask),
 	.finish_wd(finish_wd),
 	.finish_id(finish_id)
 	);

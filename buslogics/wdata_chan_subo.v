@@ -16,11 +16,13 @@ module wdata_chan_subo (
 	input wvalid,
 	output  wready,
 	input [31:0] wdata,
+	input [3:0] wstrb,
 	input wlast,
 	// signals other side
 	input next_srq,
 	input sqfull_1,
 	output [127:0] wdat_s_data,
+	output [15:0] wdat_s_mask,
 	output reg wdat_s_valid,
 	output finish_swd
 
@@ -118,10 +120,10 @@ end
 assign finish_swd = wdat_s_valid;
 
 // data buffer
-reg [31:0] wdata_ofs0;
-reg [31:0] wdata_ofs1;
-reg [31:0] wdata_ofs2;
-reg [31:0] wdata_ofs3;
+reg [35:0] wdata_ofs0;
+reg [35:0] wdata_ofs1;
+reg [35:0] wdata_ofs2;
+reg [35:0] wdata_ofs3;
 
 // write enables
 wire wdata_ofs0_wen = wready & wvalid & (burst_cntr == 2'd0);
@@ -132,41 +134,42 @@ wire wdata_ofs3_wen = wready & wvalid & (burst_cntr == 2'd3);
 // data ofs 0
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       wdata_ofs0  <= 32'd0;
+       wdata_ofs0  <= 36'd0;
     else if (wdata_ofs0_wen)
-       wdata_ofs0  <= wdata;
+       wdata_ofs0  <= { wstrb, wdata };
 end
 
 // data ofs 1
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       wdata_ofs1  <= 32'd0;
+       wdata_ofs1  <= 36'd0;
     else if (wdata_ofs0_wen & wlast)
-       wdata_ofs1  <= 32'd0;
+       wdata_ofs1  <= 36'd0;
     else if (wdata_ofs1_wen)
-       wdata_ofs1  <= wdata;
+       wdata_ofs1  <= { wstrb, wdata };
 end
 
 // data ofs 2
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       wdata_ofs2  <= 32'd0;
+       wdata_ofs2  <= 36'd0;
     else if ((wdata_ofs0_wen | wdata_ofs1_wen) & wlast)
-       wdata_ofs2  <= 32'd0;
+       wdata_ofs2  <= 36'd0;
     else if (wdata_ofs2_wen)
-       wdata_ofs2  <= wdata;
+       wdata_ofs2  <= { wstrb, wdata };
 end
 
 // data ofs 3
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
-       wdata_ofs3  <= 32'd0;
+       wdata_ofs3  <= 36'd0;
     else if ((wdata_ofs0_wen | wdata_ofs1_wen | wdata_ofs2_wen) & wlast)
-       wdata_ofs3  <= 32'd0;
+       wdata_ofs3  <= 36'd0;
     else if (wdata_ofs3_wen)
-       wdata_ofs3  <= wdata;
+       wdata_ofs3  <= { wstrb, wdata };
 end
 
-assign wdat_s_data = { wdata_ofs3, wdata_ofs2, wdata_ofs1, wdata_ofs0 };
+assign wdat_s_data = { wdata_ofs3[31:0], wdata_ofs2[31:0], wdata_ofs1[31:0], wdata_ofs0[31:0] };
+assign wdat_s_mask = { wdata_ofs3[35:32], wdata_ofs2[35:32], wdata_ofs1[35:32], wdata_ofs0[35:32] };
 
 endmodule

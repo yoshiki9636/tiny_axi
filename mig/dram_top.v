@@ -41,6 +41,7 @@ module dram_top (
     input wvalid,
     output  wready,
     input [31:0] wdata,
+    input [3:0] wstrb,
     input wlast,
 	// write response
     output bvalid,
@@ -66,6 +67,7 @@ wire wreqc_s_valid; // output
 wire [31:0] wreqc_s_addr; // output
 wire sqfull_1; // input
 wire [127:0] wdat_s_data; // output
+wire [15:0] wdat_s_mask; // output
 wire wdat_s_valid; // output
 
 wire rqfull_1; // input
@@ -91,6 +93,7 @@ write_channels_subo write_channels_subo (
 	.wvalid(wvalid),
 	.wready(wready),
 	.wdata(wdata),
+	.wstrb(wstrb),
 	.wlast(wlast),
 	.bvalid(bvalid),
 	.bready(bready),
@@ -101,6 +104,7 @@ write_channels_subo write_channels_subo (
 	.wreqc_s_addr(wreqc_s_addr),
 	.sqfull_1(sqfull_1),
 	.wdat_s_data(wdat_s_data),
+	.wdat_s_mask(wdat_s_mask),
 	.wdat_s_valid(wdat_s_valid)
 	);
 
@@ -173,19 +177,20 @@ assign rcmd_wen = ~radr_rqempty;
 // write data queue
 wire wdq_rnext;
 wire wdq_rqempty;
-wire [127:0] wdq_rdata;
+wire [143:0] wdat_s_mask_data = { wdat_s_mask, wdat_s_data};
+wire [143:0] wdq_mask_rdata;
 
-afifo #(.AFIFODW(128)) write_data_queue (
+afifo #(.AFIFODW(144)) write_data_queue (
 	.wclk(clk),
 	.wrst_n(rst_n),
 	.rclk(mclk),
 	.rrst_n(mrst_n),
 	.wen(wdat_s_valid),
 	.wqfull(sqfull_1),
-	.wdata(wdat_s_data),
+	.wdata(wdat_s_mask_data),
 	.rnext(wdq_rnext),
 	.rqempty(wdq_rqempty),
-	.rdata(wdq_rdata)
+	.rdata(wdq_mask_rdata)
 	);
 
 // read data queue
@@ -271,7 +276,7 @@ mig_if mig_if (
 	.req_rd_bwt(req_rd_bwt),
 	.wdq_rnext(wdq_rnext),
 	.wdq_rqempty(wdq_rqempty),
-	.wdq_rdata(wdq_rdata),
+	.wdq_mask_rdata(wdq_mask_rdata),
 	.rdq_wen(rdq_wen),
 	.rdq_wdata(rdq_wdata)
 	);

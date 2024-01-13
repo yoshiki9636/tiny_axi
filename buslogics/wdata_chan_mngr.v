@@ -16,11 +16,13 @@ module wdata_chan_mngr (
 	output wvalid,
 	input  wready,
 	output [31:0] wdata,
+	output [3:0] wstrb,
 	output wlast,
 	// signals other side
 	input next_rq,
 	input [3:0] next_id,
 	input [127:0] next_wdata,
+	input [15:0] next_mask,
 	output finish_wd,
 	output [3:0] finish_id
 	//output reg [3:0] finish_id
@@ -104,6 +106,10 @@ assign wcntr_2 = (burst_cntr == 2'd1);
 assign  wdata = (burst_cntr == 2'd3) ? next_wdata[31:0] :
                 (burst_cntr == 2'd2) ? next_wdata[63:32] :
                 (burst_cntr == 2'd1) ? next_wdata[95:64] : next_wdata[127:96];
+
+assign  wstrb = (burst_cntr == 2'd3) ? next_mask[3:0] :
+                (burst_cntr == 2'd2) ? next_mask[7:4] :
+                (burst_cntr == 2'd1) ? next_mask[11:8] : next_mask[15:12];
 
 // id address keeper
 

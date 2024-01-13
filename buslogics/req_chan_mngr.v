@@ -25,9 +25,11 @@ module req_chan_mngr
 	// signals other side
 	input start_rq,
 	input [31:0] in_addr,
+	input [15:0] in_mask,
 	input [127:0] in_data,
 	output next_rq,
 	output [3:0] next_id,
+	output [15:0] next_mask,
 	output [127:0] next_data,
 	input ren_id_data
 	//output reg [3:0] next_id
@@ -107,8 +109,8 @@ end
 
 // address data queue
 
-wire [129:0] in_id_data = { id_cntr, in_data };
-wire [129:0] out_id_data;
+wire [145:0] in_id_data = { id_cntr, in_mask, in_data };
+wire [145:0] out_id_data;
 wire empty_rq;
 wire qfull_rq_dmy;
 wire empty_rq_dmy;
@@ -132,7 +134,7 @@ sfifo
 assign inner_start = ~empty_rq;
 
 sfifo
-    #(.SFIFODW(130),
+    #(.SFIFODW(146),
       .SFIFOAW(2),
       .SFIFODP(4)
     ) request_id_wdata (
@@ -147,7 +149,8 @@ sfifo
     );
 
 assign a_addr = out_addr;
-assign a_id = { REQC_M_ID, out_id_data[129:128] };
+assign a_id = { REQC_M_ID, out_id_data[145:144] };
+assign next_mask = out_id_data[143:128];
 assign next_data = out_id_data[127:0];
 assign next_id = a_id;
 

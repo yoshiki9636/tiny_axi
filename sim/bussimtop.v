@@ -25,6 +25,7 @@ always #5 mclk <= ~mclk;
 reg wstart_rq; // input
 reg [31:0] win_addr; // input
 reg [127:0] in_wdata; // input
+reg [16:0] in_mask; // input
 wire finish_wresp; // output
 
 // axi read bus manager
@@ -42,6 +43,7 @@ initial begin
 	wstart_rq = 1'b0;
 	win_addr = 32'd0;
 	in_wdata = 128'd0;
+	in_mask = 16'h0000;
 
 	rstart_rq = 1'b0;
 	rqfull_1 = 1'b0;
@@ -60,13 +62,16 @@ initial begin
 	wstart_rq = 1'b1;
 	win_addr = 32'h0000_0100;
 	in_wdata = 128'h4444_4444_3333_3333_2222_2222_1111_1111;
+	in_mask = 16'hff0f;
 #10
 	win_addr = 32'h0000_0200;
 	in_wdata = 128'h8888_8888_7777_7777_6666_6666_5555_5555;
+	in_mask = 16'hf0ff;
 #10
 	wstart_rq = 1'b0;
 	win_addr = 32'h00000000;
 	in_wdata = 128'd0;
+	in_mask = 16'h0000;
 
 #100
 	rstart_rq = 1'b1;
@@ -116,6 +121,7 @@ wire [5:0] awatop;
 wire wvalid;
 wire wready;
 wire [31:0] wdata;
+wire [31:0] wstrb;
 wire wlast;
 wire bvalid;
 wire bready;
@@ -173,6 +179,7 @@ dram_top dram_top (
 	.wvalid(wvalid),
 	.wready(wready),
 	.wdata(wdata),
+	.wstrb(wstrb),
 	.wlast(wlast),
 	.bvalid(bvalid),
 	.bready(bready),
@@ -202,6 +209,7 @@ write_channels_mngr write_channels_mngr (
 	.wvalid(wvalid),
 	.wready(wready),
 	.wdata(wdata),
+	.wstrb(wstrb),
 	.wlast(wlast),
 	.bvalid(bvalid),
 	.bready(bready),
@@ -210,6 +218,7 @@ write_channels_mngr write_channels_mngr (
 	.wstart_rq(wstart_rq),
 	.win_addr(win_addr),
 	.in_wdata(in_wdata),
+	.in_mask(in_mask),
 	.finish_wresp(finish_wresp)
 	);
 
