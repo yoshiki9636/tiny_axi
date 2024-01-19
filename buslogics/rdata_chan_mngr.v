@@ -41,7 +41,7 @@ wire check_ok;
 function [2:0] rdat_m_decode;
 input [2:0] rdat_m_current;
 input next_rrq;
-input rready;
+input rvalid;
 input rlast;
 input rqfull_1;
 input check_ok;
@@ -55,7 +55,7 @@ begin
     		endcase
 		end
 		`RDAT_MBINP: begin
-    		casex({rready, check_ok, rlast, rqfull_1, next_rrq})
+    		casex({rvalid, check_ok, rlast, rqfull_1, next_rrq})
 				5'b0xxxx: rdat_m_decode = `RDAT_MBINP;
 				5'b00xxx: rdat_m_decode = `RDAT_MBINP;
 				5'b110xx: rdat_m_decode = `RDAT_MBINP;
@@ -67,7 +67,7 @@ begin
     		endcase
 		end
 		`RDAT_MLST1: begin
-    		casex({rready, rlast, rqfull_1, next_rrq})
+    		casex({rvalid, rlast, rqfull_1, next_rrq})
 				4'b0xxx: rdat_m_decode = `RDAT_MLST1;
 				4'b10xx: rdat_m_decode = `RDAT_MLST1;
 				4'b111x: rdat_m_decode = `RDAT_MBUSY;
@@ -90,7 +90,7 @@ begin
 end
 endfunction
 
-wire [2:0] rdat_m_next = rdat_m_decode( rdat_m_current, next_rrq, rready, rlast, rqfull_1, check_ok );
+wire [2:0] rdat_m_next = rdat_m_decode( rdat_m_current, next_rrq, rvalid, rlast, rqfull_1, check_ok );
 
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n)
