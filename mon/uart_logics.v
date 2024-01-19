@@ -25,7 +25,7 @@ module uart_logics
 	input read_valid,
 	output [31:0] d_ram_wadr,
 	output [127:0] d_ram_wdata,
-	output [16:0] d_ram_mask,
+	output [15:0] d_ram_mask,
 	output d_ram_wen,
 	output d_read_sel,
 	// from controller
