@@ -114,6 +114,7 @@ assign d_ram_wadr_all =  trush_running ? { { 30-DWIDTH{ 1'b0}}, trush_adr} : cmd
 assign d_ram_wdata = { i_ram_wdata, i_ram_wdata, i_ram_wdata, i_ram_wdata };
 assign d_ram_wen = write_data_en | trush_running;
 assign d_ram_wadr = { d_ram_wadr_all[31:4], 4'd0} ;
+// zantei : need to resolve
 assign d_ram_mask = (d_ram_wadr_all[3:2] == 2'd3) ? 16'h0fff :
                     (d_ram_wadr_all[3:2] == 2'd2) ? 16'hf0ff :
                     (d_ram_wadr_all[3:2] == 2'd1) ? 16'hff0f : 16'hfff0;
@@ -141,7 +142,7 @@ end
 always @ (posedge clk or negedge rst_n) begin
 	if (~rst_n)
 		dread_dsel <= 1'b0;
-	else if (dradr_cntup)
+	else
 		dread_dsel <= cmd_read_adr[3];
 end
 
@@ -308,16 +309,14 @@ always @ (posedge clk or negedge rst_n) begin
 	if (~rst_n)
 		data_0 <= 32'd0;
 	else if (en0_data)
-		//data_0 <= i_ram_sel ? i_ram_rdata : dread_dsel ? d_ram_rdata[95:64] : d_ram_rdata[31:0];
-		data_0 <= i_ram_sel ? i_ram_rdata : cmd_read_adr[3] ? d_ram_rdata[95:64] : d_ram_rdata[31:0];
+		data_0 <= i_ram_sel ? i_ram_rdata : dread_dsel ? d_ram_rdata[95:64] : d_ram_rdata[31:0];
 end
 
 always @ (posedge clk or negedge rst_n) begin
 	if (~rst_n)
 		data_1 <= 32'd0;
 	else if (en1_data)
-		//data_1 <= i_ram_sel ? i_ram_rdata : dread_dsel ? d_ram_rdata[127:96] : d_ram_rdata[63:32];
-		data_1 <= i_ram_sel ? i_ram_rdata : cmd_read_adr[3] ? d_ram_rdata[127:96] : d_ram_rdata[63:32];
+		data_1 <= i_ram_sel ? i_ram_rdata : dread_dsel ? d_ram_rdata[127:96] : d_ram_rdata[63:32];
 end
 
 /*
