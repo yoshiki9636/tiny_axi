@@ -1,6 +1,6 @@
 tiny axi bus model
 
-This bus model is not guarantee *real* AXI bus agents. Just only tested own manager/subordinate.
+This bus model is not guarantee *real* AXI bus agents. Just only tested between own manager/subordinate.
 
 ---------------
 @auther Yoshiki Kurokawa yoshiki.k963@gmail.com
